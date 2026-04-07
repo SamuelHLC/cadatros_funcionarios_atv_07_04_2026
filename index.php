@@ -1,26 +1,16 @@
 <?php
 session_start();
-require 'db.php';
-
-// Se já estiver logado, manda direto para a listagem
-if (isset($_SESSION['logado'])) {
-    header("Location: listagem.php");
-    exit;
-}
+include('config.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $usuario = trim($_POST['usuario']);
-    $senha = trim($_POST['senha']);
+    $usuario = pg_escape_string($_POST['usuario']);
+    $senha = $_POST['senha']; // Em sistemas reais, use password_verify
 
-    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE usuario = ? AND senha = ?");
-    $stmt->execute([$usuario, $senha]);
+    $result = pg_query($conn, "SELECT * FROM usuarios WHERE login = '$usuario' AND senha = '$senha'");
     
-    if ($stmt->rowCount() > 0) {
-        $user_data = $stmt->fetch(PDO::FETCH_ASSOC);
-        $_SESSION['logado'] = true;
-        $_SESSION['usuario'] = $user_data['usuario'];
+    if (pg_num_rows($result) > 0) {
+        $_SESSION['usuario'] = $usuario;
         header("Location: listagem.php");
-        exit;
     } else {
         $erro = "Usuário ou senha inválidos!";
     }
@@ -29,40 +19,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Login - Cadastro de Funcionários</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #f4f6f9; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .login-card { max-width: 400px; width: 100%; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: none; padding: 2rem; }
-        .btn-primary { background-color: #3b71ca; border: none; }
+        body { background: #f0f2f5; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #3b71ca; color: white; border: none; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="card login-card">
-        <div class="text-center mb-4">
-            <h4 class="text-primary fw-bold">
-                <i class="fas fa-user-tie fa-2x mb-2" style="color: #2b5876;"></i><br>
-                Cadastro de Funcionários
-            </h4>
-        </div>
-        
-        <?php if(isset($erro)) echo "<div class='alert alert-danger text-center'>$erro</div>"; ?>
-
+    <div class="login-card">
+        <h2>Cadastro de Funcionários</h2>
         <form method="POST">
-            <div class="input-group mb-3">
-                <span class="input-group-text bg-white"><i class="fas fa-user text-secondary"></i></span>
-                <input type="text" name="usuario" class="form-control" placeholder="Usuário" required>
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text bg-white"><i class="fas fa-lock text-secondary"></i></span>
-                <input type="password" name="senha" class="form-control" placeholder="Senha" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-3 fw-bold">Entrar</button>
-            <div class="text-center border-top pt-3">
-                <a href="#" class="text-secondary text-decoration-none">Esqueci minha senha</a>
-            </div>
+            <input type="text" name="usuario" placeholder="Usuário" required>
+            <input type="password" name="senha" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+            <?php if(isset($erro)) echo "<p style='color:red'>$erro</p>"; ?>
         </form>
     </div>
 </body>
