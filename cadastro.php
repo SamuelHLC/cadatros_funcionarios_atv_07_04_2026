@@ -1,30 +1,62 @@
 <?php
-/**
- * Configuração da Conexão com PostgreSQL
- * Este arquivo deve ser incluído em todas as páginas que acessam o banco.
- */
+include 'config.php';
 
-$host     = "localhost";     // Geralmente localhost
-$port     = "5432";          // Porta padrão do PostgreSQL
-$dbname   = "cadastro_func";   // O nome do banco que você criou no pgAdmin
-$user     = "postgres";      // Usuário padrão do sistema
-$password = "1234"; // <--- COLOQUE A SENHA DO SEU PGADMIN AQUI
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $nome = $_POST['nome'];
+    $cargo = $_POST['cargo'];
+    $email = $_POST['email'];
+    $telefone = $_POST['telefone'];
 
-// String de conexão montada
-$connection_string = "host=$host port=$port dbname=$dbname user=$user password=$password";
+    // Inserção no PostgreSQL usando o $conn (pg_connect) que está no seu config
+    $sql = "INSERT INTO funcionarios (nome, cargo, email, telefone, situacao) 
+            VALUES ('$nome', '$cargo', '$email', '$telefone', 't')";
+    
+    $result = pg_query($conn, $sql);
 
-// Executa a tentativa de conexão
-$conn = pg_connect($connection_string);
-
-// Verifica se a conexão falhou
-if (!$conn) {
-    echo "<h3>Erro de Conexão detectado!</h3>";
-    echo "Verifique se o serviço do PostgreSQL está rodando e se a senha no config.php está correta.<br>";
-    echo "<strong>Detalhes do erro:</strong> " . pg_last_error();
-    exit; // Interrompe a execução do script se não conectar
+    if ($result) {
+        echo "<script>alert('Funcionário cadastrado!'); window.location.href='listagem.php';</script>";
+    } else {
+        echo "Erro ao cadastrar: " . pg_last_error($conn);
+    }
 }
-
-// Opcional: Define o charset para evitar problemas com acentuação (PT-BR)
-pg_set_client_encoding($conn, "UNICODE");
-
 ?>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Funcionário</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { max-width: 500px; margin-top: 50px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4">Cadastrar Funcionário</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Nome Completo</label>
+                <input type="text" name="nome" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Cargo</label>
+                <input type="text" name="cargo" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">E-mail</label>
+                <input type="email" name="email" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Telefone</label>
+                <input type="text" name="telefone" class="form-control">
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Finalizar Cadastro</button>
+                <a href="listagem.php" class="btn btn-outline-secondary">Ver Lista</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

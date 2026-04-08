@@ -44,7 +44,7 @@ $res = pg_query($conn, $sql);
                 <td><?php echo $row['email']; ?></td>
                 <td><?php echo $row['situacao'] == 't' ? 'Ativo' : 'Inativo'; ?></td>
                 <td>
-                    <a href="cadastro.php?edit=<?php echo $row['id']; ?>">✏️</a>
+                    <a href="editar.php?id=<?php echo $row['id']; ?>">✏️</a>
                     <a href="excluir.php?id=<?php echo $row['id']; ?>" onclick="return confirm('Excluir?')">🗑️</a>
                 </td>
             </tr>
