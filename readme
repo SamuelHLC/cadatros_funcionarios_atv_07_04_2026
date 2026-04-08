@@ -1,0 +1,42 @@
+# 🚀 Sistema de Cadastro de Funcionários (PHP + PostgreSQL)
+
+Este é um projeto de CRUD (Create, Read, Update, Delete) completo, desenvolvido para gerenciar o cadastro de colaboradores de uma empresa. O sistema permite realizar o login, cadastrar, listar, editar e excluir funcionários.
+
+## 🛠️ Tecnologias Utilizadas
+
+* **Linguagem:** PHP 8.x
+* **Banco de Dados:** PostgreSQL 16
+* **Interface:** Bootstrap 5 (CSS)
+* **Servidor Local:** XAMPP (Apache)
+
+## 📌 Funcionalidades
+
+* **Sistema de Login:** Acesso restrito via sessão para usuários cadastrados.
+* **Listagem Dinâmica:** Visualização de todos os funcionários com busca por nome (ILIKE).
+* **Cadastro:** Inclusão de novos registros com validação básica.
+* **Edição:** Atualização de dados de funcionários já existentes.
+* **Exclusão:** Remoção de registros do banco de dados.
+
+## 🚀 Como Rodar o Projeto
+
+1.  **Configurar o Banco de Dados:**
+    * Crie um banco de dados no PostgreSQL chamado `cadastro_db`.
+    * Execute o script SQL (fornecido na pasta `/sql` ou no arquivo de configuração) para criar as tabelas `usuarios` e `funcionarios`.
+    
+2.  **Configurar o Servidor Local:**
+    * Mova a pasta do projeto para `C:/xampp/htdocs/projeto_funcionarios`.
+    * Certifique-se de que a extensão `pdo_pgsql` e `pgsql` estão habilitadas no seu `php.ini`.
+
+3.  **Ajustar Conexão:**
+    * Verifique as credenciais no arquivo `config.php`.
+
+4.  **Acessar no Navegador:**
+    * Abra: `http://localhost/projeto_funcionarios/index.php`
+
+## 🔐 Dados de Acesso Padrão
+
+* **Usuário:** admin
+* **Senha:** 123456
+
+---
+Desenvolvido por [Seu Nome] - 2026
